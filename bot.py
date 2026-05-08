@@ -395,7 +395,7 @@ def process_attack_details(message):
             }
             headers = {
                 "Content-Type": "application/json",
-                "Authorization": f"Bearer {API_KEY}"
+                "X-API-Key": API_KEY
             }
 
             try:
