@@ -19,7 +19,7 @@ import sys
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 #  CONFIG (Optimized Threading)
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-BOT_TOKEN = os.environ.get("7072312985:AAHgR5Lc87DxZANKH2cIeXCgd1PuSInMYD0")
+BOT_TOKEN = os.environ.get("BOT_TOKEN")
 
 if not BOT_TOKEN:
     print("❌ FATAL ERROR: BOT_TOKEN is missing! Check your host's environment variables.")
