@@ -6,6 +6,8 @@ import string
 import telebot
 import datetime
 import calendar
+import subprocess
+import threading
 import logging
 import requests
 from telebot import types
@@ -328,6 +330,14 @@ def start_command(message):
     markup.add(attack_button, myinfo_button, redeem_button)
     bot.reply_to(message, "𝗪𝗲𝗹𝗰𝗼𝗺𝗲 𝘁𝗼 *𝗠𝗥𝗶𝗡 𝘅 𝗗𝗶𝗟𝗗𝗢𝗦™* 𝗯𝗼𝘁!", reply_markup=markup)
 
+def send_attack_finished_message(chat_id, target, port, time_val):
+    """Notify the user that the attack is finished."""
+    message = f"➖ 𝗔𝘁𝘁𝗮𝗰𝗸 𝗰𝗼𝗺𝗽𝗹𝗲𝘁𝗲𝗱 ! ✅\n\n𝗧𝗮𝗿𝗴𝗲𝘁: {target}:{port}\n𝗗𝘂𝗿𝗮𝘁𝗶𝗼𝗻: {time_val}s"
+    try:
+        bot.send_message(chat_id, message)
+    except Exception as e:
+        print(f"Failed to send finish message: {e}")
+
 @bot.message_handler(func=lambda message: message.text == "🚀 Attack")
 def handle_attack(message):
     user_id = str(message.chat.id)
@@ -390,6 +400,10 @@ def process_attack_details(message):
                 
                 if resp.status_code == 200:
                     response = f"🚀 𝗔𝘁𝘁𝗮𝗰𝗸 𝗦𝗲𝗻𝘁 𝗦𝘂𝗰𝗰𝗲𝘀𝘀𝗳𝘂𝗹𝗹𝘆 ! 🚀\n\n𝗧𝗮𝗿𝗴𝗲𝘁: {target}:{port}\n𝗧𝗶𝗺𝗲: {time_val} 𝘀𝗲𝗰𝗼𝗻𝗱𝘀\n𝗔𝘁𝘁𝗮𝗰𝗸𝗲𝗿: @{username}"
+                    
+                    # Start a timer to notify when finished
+                    threading.Timer(time_val, send_attack_finished_message, [message.chat.id, target, port, time_val]).start()
+                    
                 else:
                     response = f"❌ 𝗔𝗣𝗜 𝗘𝗿𝗿𝗼𝗿: {resp.status_code}\n{resp.text}"
                     
