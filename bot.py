@@ -16,6 +16,11 @@ from threading import Timer
 import pytz
 import sys
 
+# Function to read token from file
+def read_token_from_file(file_path):
+    with open(file_path, 'r') as file:
+        return file.read().strip()
+        
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 #  CONFIG (Optimized Threading)
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
