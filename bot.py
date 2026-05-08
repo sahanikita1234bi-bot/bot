@@ -19,13 +19,10 @@ import sys
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 #  CONFIG (Optimized Threading)
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-BOT_TOKEN = os.environ.get("BOT_TOKEN")
-
-if not BOT_TOKEN:
-    print("❌ FATAL ERROR: BOT_TOKEN is missing! Check your host's environment variables.")
-    sys.exit(1)
-
+# Initialize bot with token
+BOT_TOKEN = read_token_from_file('token.txt')
 bot = telebot.TeleBot(BOT_TOKEN, threaded=True, num_threads=32)
+
 
 # 🔥 ULTRA-FAST UI PATCH 🔥
 original_delete = bot.delete_message
