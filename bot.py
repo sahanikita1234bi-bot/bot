@@ -398,6 +398,16 @@ def process_attack_details(message):
                 # Send request to API
                 resp = requests.post(api_url, json=payload, headers=headers, timeout=10)
                 
+                # --- START OF ADDED LOGGING ---
+                print(f"--- API REQUEST LOG ---")
+                print(f"User: {username} (ID: {user_id})")
+                print(f"Target: {target}:{port}")
+                print(f"Time: {time_val}s")
+                print(f"API Status Code: {resp.status_code}")
+                print(f"API Response Body: {resp.text}")
+                print(f"-----------------------")
+                # --- END OF ADDED LOGGING ---
+
                 if resp.status_code == 200:
                     response = f"🚀 𝗔𝘁𝘁𝗮𝗰𝗸 𝗦𝗲𝗻𝘁 𝗦𝘂𝗰𝗰𝗲𝘀𝘀𝗳𝘂𝗹𝗹𝘆 ! 🚀\n\n𝗧𝗮𝗿𝗴𝗲𝘁: {target}:{port}\n𝗧𝗶𝗺𝗲: {time_val} 𝘀𝗲𝗰𝗼𝗻𝗱𝘀\n𝗔𝘁𝘁𝗮𝗰𝗸𝗲𝗿: @{username}"
                     
@@ -408,6 +418,13 @@ def process_attack_details(message):
                     response = f"❌ 𝗔𝗣𝗜 𝗘𝗿𝗿𝗼𝗿: {resp.status_code}\n{resp.text}"
                     
             except Exception as e:
+                # Log the exception as well
+                print(f"--- API EXCEPTION LOG ---")
+                print(f"User: {username} (ID: {user_id})")
+                print(f"Target: {target}:{port}")
+                print(f"Exception: {str(e)}")
+                print(f"-------------------------")
+                
                 response = f"❌ 𝗙𝗮𝗶𝗹𝗲𝗱 𝘁𝗼 𝗰𝗼𝗻𝗻𝗲𝗰𝘁 𝘁𝗼 𝗔𝗣𝗜: {str(e)}"
 
         except ValueError:
